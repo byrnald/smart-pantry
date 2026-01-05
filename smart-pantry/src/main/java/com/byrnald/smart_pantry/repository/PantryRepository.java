@@ -4,9 +4,13 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import com.byrnald.smart_pantry.model.PantryItem;
+import java.util.List;
+import java.time.LocalDate;
+
 
 @Repository // this annotation tells spring that this is a repository, basically just interacts with the database.
 public interface PantryRepository extends JpaRepository<PantryItem, Long> {
+    List<PantryItem> findByExpirationDateBetween(LocalDate start, LocalDate end);
     
 }
 // this interface extends JpaRepository so it provides basic CRUD operations for the PantryItem entity.

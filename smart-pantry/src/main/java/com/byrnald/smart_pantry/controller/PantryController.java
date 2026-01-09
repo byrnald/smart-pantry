@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.byrnald.smart_pantry.model.PantryItem;
@@ -57,6 +58,13 @@ public class PantryController {
     public PantryItem updateItem(@PathVariable Long id, @RequestBody PantryItem itemDetails) { 
         return pantryService.updateItem(id, itemDetails);
         // this will update an item by id, and the new details will be in the request body
+    }
+   
+    // URL: http://localhost:8080/api/pantry/low-stock?threshold=5
+    @GetMapping("/low-stock")
+    public List<PantryItem> getLowStock(@RequestParam(defaultValue = "5") int threshold) { 
+        //the @ RequestParam helps me change the warning level on in the URL instantly
+        return pantryService.getLowStockItems(threshold);
     }
     
 }

@@ -73,5 +73,9 @@ public class PantryService {
             return pantryRepository.save(item);
         }).orElseThrow(() -> new RuntimeException("Item with id: " + id));
     }
+    
+    public List<PantryItem> getLowStockItems(int threshold) { 
+        return pantryRepository.findByQuantityLessThan(threshold);
+    }
 
 }

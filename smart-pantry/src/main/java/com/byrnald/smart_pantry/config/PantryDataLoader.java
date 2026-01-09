@@ -1,13 +1,14 @@
 package com.byrnald.smart_pantry.config;
 
-import com.byrnald.smart_pantry.model.PantryItem;
-import com.byrnald.smart_pantry.repository.PantryRepository;
+import java.time.LocalDate;
+import java.util.List;
+
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.time.LocalDate;
-import java.util.List;
+import com.byrnald.smart_pantry.model.PantryItem;
+import com.byrnald.smart_pantry.repository.PantryRepository;
 
 @Configuration // this annotation tells spring that this class is a configuration class,
 // which means it will contain bean definitions and other settings for our application

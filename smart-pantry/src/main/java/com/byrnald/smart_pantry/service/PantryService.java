@@ -78,4 +78,25 @@ public class PantryService {
         return pantryRepository.findByQuantityLessThan(threshold);
     }
 
+    public List<PantryItem> getUrgentItems()  {
+        LocalDate start = LocalDate.of(2000, 1, 1); //old date to make sure we get all items that are expired
+        LocalDate end = LocalDate.now().plusDays(3); // we want to get all items that are expiring in the next 3 days
+        int lowStockThreshold = 5; // we can adjust this threshold as needed, but for now we will just set it to 5
+
+        // we start with an old date to make sure we get all items
+        //then we set the end date to 3 days from now to get all items that are expiring soon 
+        // so anything that expires in 3 days or less will be considered urgent
+
+        // so for example our eggs expire the 16th of jan
+        // so eggs would show up as urgent on the 13th, 14th and 15th of jan
+
+        List<PantryItem> expiringUrgent = pantryRepository.findByExpirationDateBetween(start, end);
+        List<PantryItem> lowStock = pantryRepository.findByQuantityLessThan(lowStockThreshold);
+
+        java.util.Set<PantryItem> urgentSet = new java.util.HashSet<>(expiringUrgent);
+        urgentSet.addAll(lowStock);
+
+        return new java.util.ArrayList<>(urgentSet);
+    }
+
 }

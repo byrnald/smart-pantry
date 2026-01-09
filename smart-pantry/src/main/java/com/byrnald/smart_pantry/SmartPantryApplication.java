@@ -14,4 +14,12 @@ public class SmartPantryApplication {
 	// JDBC URL: jdbc:h2:mem:testdb (this has to be the same as the one in application.properties)
 	// or to see its json format you can go to http://localhost:8080/api/pantry and it will show you all the items
 
+	//AFTER DATA SEEDING:
+	// now that weve seeded our database with some data from my homelab and eggs
+	// we can test our endpoints to see if they work, go to http://localhost:8080/api/pantry/expiring to see whats expiring soon
+	// to test out by the URL http://localhost:8080/api/pantry/low-stock?threshold=10
+	// by changing the threshold in the URL you can see different items that are low stock based on quantity
+	// so with threshold of 10 only the items with quantity less than 10 will show up
+	
+
 }

@@ -21,5 +21,8 @@ public class SmartPantryApplication {
 	// by changing the threshold in the URL you can see different items that are low stock based on quantity
 	// so with threshold of 10 only the items with quantity less than 10 will show up
 	
+	//for DASHBOARD: 
+	// use http://localhost:8080/dashboard to access the dashboard and see all the items in a nice format 
+	// instead of just json like in the API endpoints
 
 }

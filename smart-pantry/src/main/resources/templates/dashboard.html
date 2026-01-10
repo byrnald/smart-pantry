@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Smart Pantry/Inventory Dashboard</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <style>
+        :root {
+            --bg-canvas: #f6f8fa;
+            --bg-default: #ffffff;
+            --bg-subtle: #f6f8fa;
+            --border-default: #d0d7de;
+            --border-muted: #d8dee4;
+            --text-primary: #1f2328;
+            --text-secondary: #656d76;
+            --accent-emphasis: #0969da;
+            --warning-bg: #fff8c5;
+        }
+        
+        body {
+            background-color: var(--bg-canvas);
+            color: var(--text-primary);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif;
+            padding: 2rem 0;
+        }
+        
+        .dashboard-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+        
+        .dashboard-header {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-muted);
+        }
+
+        .urgent-row {
+            background-color: var(--warning-bg) !important;
+        }
+
+        .table-container {
+            background-color: var(--bg-default);
+            border: 1px solid var(--border-default);
+            border-radius: 6px;
+            overflow: hidden;
+        }
+        
+        .table { margin: 0; }
+        
+        .item-name { font-weight: 600; color: var(--accent-emphasis); }
+        
+        .quantity-badge {
+            display: inline-block;
+            padding: 0.125rem 0.5rem;
+            background-color: var(--bg-subtle);
+            border: 1px solid var(--border-default);
+            border-radius: 2rem;
+            font-size: 0.75rem;
+        }
+
+        .badge-low-stock {
+            background-color: #ffebe9;
+            color: #cf222e;
+            border: 1px solid #ff8182;
+            padding: 0.125rem 0.4rem;
+            border-radius: 6px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+
+        .badge-expiring {
+            background-color: #fff1e5;
+            color: #bc4c00;
+            border: 1px solid #fb8f44;
+            padding: 0.125rem 0.4rem;
+            border-radius: 6px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <div class="dashboard-header">
+            <h1>My Inventory & Pantry Dashboard</h1>
+            <p>Tracking items with a threshold of <span th:text="${T(com.byrnald.smart_pantry.service.PantryService).DEFAULT_THRESHOLD}">5</span></p>
+        </div>
+        
+        <div class="table-container">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Item Name</th>
+                        <th>Quantity</th>
+                        <th>Expiration Date</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="item : ${items}" 
+                        th:classappend="${#lists.contains(urgentItems, item)} ? 'urgent-row' : ''">
+                        
+                        <td><span class="item-name" th:text="${item.name}">Item Name</span></td>
+                        
+                        <td><span class="quantity-badge" th:text="${item.quantity}">0</span></td>
+                        
+                        <td><span class="expiration-date" th:text="${item.expirationDate}">2026-01-01</span></td>
+
+                        <td>
+                            <span th:if="${#lists.contains(urgentItems, item) and item.quantity <= T(com.byrnald.smart_pantry.service.PantryService).DEFAULT_THRESHOLD}" 
+                                  class="badge-low-stock">LOW STOCK</span>
+                            
+                            <span th:if="${#lists.contains(urgentItems, item) and item.quantity >= T(com.byrnald.smart_pantry.service.PantryService).DEFAULT_THRESHOLD}" 
+                                  class="badge-expiring">EXPIRING SOON</span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

@@ -18,6 +18,9 @@ public class PantryService {
     // test our service by mocking the repository if needed.
     private final PantryRepository pantryRepository;
 
+    public static final int DEFAULT_THRESHOLD = 5; // we can adjust this threshold as needed, but for now we will just set it to 5
+    //this is synchronizing the low stock threshold across the service, so that we can easily change it in one place if we need to
+
     public PantryService(PantryRepository pantryRepository) {
         this.pantryRepository = pantryRepository;
     }
@@ -75,13 +78,12 @@ public class PantryService {
     }
     
     public List<PantryItem> getLowStockItems(int threshold) { 
-        return pantryRepository.findByQuantityLessThan(threshold);
+        return pantryRepository.findByQuantityLessThanEqual(threshold);
     }
 
     public List<PantryItem> getUrgentItems()  {
         LocalDate start = LocalDate.of(2000, 1, 1); //old date to make sure we get all items that are expired
         LocalDate end = LocalDate.now().plusDays(3); // we want to get all items that are expiring in the next 3 days
-        int lowStockThreshold = 5; // we can adjust this threshold as needed, but for now we will just set it to 5
 
         // we start with an old date to make sure we get all items
         //then we set the end date to 3 days from now to get all items that are expiring soon 
@@ -91,7 +93,7 @@ public class PantryService {
         // so eggs would show up as urgent on the 13th, 14th and 15th of jan
 
         List<PantryItem> expiringUrgent = pantryRepository.findByExpirationDateBetween(start, end);
-        List<PantryItem> lowStock = pantryRepository.findByQuantityLessThan(lowStockThreshold);
+        List<PantryItem> lowStock = pantryRepository.findByQuantityLessThanEqual(DEFAULT_THRESHOLD);
 
         java.util.Set<PantryItem> urgentSet = new java.util.HashSet<>(expiringUrgent);
         urgentSet.addAll(lowStock);

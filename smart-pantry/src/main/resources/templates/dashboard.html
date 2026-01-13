@@ -141,6 +141,12 @@
 
                         <td>
                             <div class="d-flex gap-2">
+                                <a th:href="@{/dashboard/edit/{id}(id=${item.id})}" 
+                                   class="btn btn-sm btn-outline-primary" 
+                                   style="font-size: 0.7rem; padding: 0.1rem 0.5rem; font-weight: 600;">
+                                   Edit
+                                </a>
+
                                 <form th:action="@{/dashboard/subtract/{id}(id=${item.id})}" method="post">
                                     <button type="submit" class="btn btn-sm btn-outline-warning" 
                                             style="font-size: 0.7rem; padding: 0.1rem 0.5rem; font-weight: 600;">

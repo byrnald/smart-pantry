@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import java.time.LocalDate;
 import com.byrnald.smart_pantry.model.PantryItem;
+import com.byrnald.smart_pantry.repository.PantryRepository;
 
 import com.byrnald.smart_pantry.service.PantryService;
 
@@ -15,9 +16,11 @@ import com.byrnald.smart_pantry.service.PantryService;
 public class PantryWebController {
 
     private final PantryService pantryService;
+    private final PantryRepository pantryRepository;
 
-    public PantryWebController(PantryService pantryService) {
+    public PantryWebController(PantryService pantryService, PantryRepository pantryRepository) {
         this.pantryService = pantryService;
+        this.pantryRepository = pantryRepository;
     }
 
     @GetMapping("/dashboard")
@@ -73,6 +76,29 @@ public class PantryWebController {
         }
 
         pantryService.saveItem(newItem);
+        return "redirect:/dashboard";
+    }
+
+    //show the edit form with existing info
+    @GetMapping("/dashboard/edit/{id}")
+    public String showEditForm(@PathVariable Long id, org.springframework.ui.Model model) { 
+        pantryRepository.findById(id).ifPresent(item -> model.addAttribute("item", item));
+        return "edit-item"; // this tells spring to look for edit-item.html
+    }
+    //process the update
+    @PostMapping("/dashboard/edit/{id}")
+    public String updateItem(@PathVariable Long id, @RequestParam String name, @RequestParam int quantity, @RequestParam(required = false) String expirationDate, @RequestParam String category) { 
+        pantryRepository.findById(id).ifPresent(item -> {
+            item.setName(name);
+            item.setQuantity(quantity);
+            item.setCategory(category);
+            if (expirationDate != null && !expirationDate.isEmpty()) {
+                item.setExpirationDate(java.time.LocalDate.parse(expirationDate));
+            } else { 
+                item.setExpirationDate(null);
+            }
+            pantryRepository.save(item);
+        });
         return "redirect:/dashboard";
     }
 

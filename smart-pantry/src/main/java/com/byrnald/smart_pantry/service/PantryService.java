@@ -115,4 +115,12 @@ public class PantryService {
     //item.setQuantity takes the current number and adds 1
     //pantryRepository.save sends the updated itme back to the database to commit the change
 
+    //now that the featur to add (restock) is added, now we make a method to subtract
+    public void substractItem(Long id) { 
+        pantryRepository.findById(id).ifPresent(item -> {
+            item.setQuantity(item.getQuantity() - 1); //just by 1
+            pantryRepository.save(item);
+        });
+    }
+
 }

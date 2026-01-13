@@ -118,6 +118,13 @@
 
                         <td>
                             <div class="d-flex gap-2">
+                                <form th:action="@{/dashboard/subtract/{id}(id=${item.id})}" method="post">
+                                    <button type="submit" class="btn btn-sm btn-outline-warning" 
+                                            style="font-size: 0.7rem; padding: 0.1rem 0.5rem; font-weight: 600;">
+                                        -1 Use
+                                    </button>
+                                </form>
+
                                 <form th:action="@{/dashboard/restock/{id}(id=${item.id})}" method="post">
                                     <button type="submit" class="btn btn-sm btn-outline-success" 
                                             style="font-size: 0.7rem; padding: 0.1rem 0.5rem; font-weight: 600;">

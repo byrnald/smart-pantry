@@ -45,4 +45,10 @@ public class PantryWebController {
         return "redirect:/dashboard";
     }
 
+    @PostMapping("/dashboard/subtract/{id}")
+    public String subtractItem(@PathVariable Long id) { 
+        pantryService.substractItem(id);
+        return "redirect:/dashboard";
+    }
+
 }

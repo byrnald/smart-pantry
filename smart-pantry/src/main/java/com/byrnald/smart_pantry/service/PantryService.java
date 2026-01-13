@@ -123,4 +123,8 @@ public class PantryService {
         });
     }
 
+    public void saveItem(PantryItem item) { 
+        pantryRepository.save(item);
+    }
+
 }

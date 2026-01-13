@@ -82,9 +82,12 @@
 </head>
 <body>
     <div class="dashboard-container">
-        <div class="dashboard-header">
-            <h1>My Inventory & Pantry Dashboard</h1>
-            <p>Tracking items with a threshold of <span th:text="${T(com.byrnald.smart_pantry.service.PantryService).DEFAULT_THRESHOLD}">5</span></p>
+        <div class="dashboard-header d-flex justify-content-between align-items-center">
+            <div>
+                <h1>My Inventory & Pantry Dashboard</h1>
+                <p class="mb-0">Tracking items with a threshold of <span th:text="${T(com.byrnald.smart_pantry.service.PantryService).DEFAULT_THRESHOLD}">5</span></p>
+            </div>
+            <a href="/dashboard/add" class="btn btn-primary" style="font-weight: 600; background-color: #1f883d; border: none;">+ Add New Item</a>
         </div>
         
         <div class="table-container">

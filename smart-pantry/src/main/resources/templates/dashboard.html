@@ -49,6 +49,18 @@
         .table { margin: 0; }
         
         .item-name { font-weight: 600; color: var(--accent-emphasis); }
+
+        /* Style for the Category Pill */
+        .category-pill {
+            font-size: 0.7rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 2rem;
+            background: #eff1f3;
+            color: #4b535d;
+            border: 1px solid #d0d7de;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
         
         .quantity-badge {
             display: inline-block;
@@ -94,6 +106,7 @@
             <table class="table table-hover">
                 <thead>
                     <tr>
+                        <th>Category</th>
                         <th>Item Name</th>
                         <th>Quantity</th>
                         <th>Expiration Date</th>
@@ -105,11 +118,18 @@
                     <tr th:each="item : ${items}" 
                         th:classappend="${#lists.contains(urgentItems, item)} ? 'urgent-row' : ''">
                         
+                        <td>
+                            <span class="category-pill" th:text="${item.category != null ? item.category : 'Other'}">Category</span>
+                        </td>
+
                         <td><span class="item-name" th:text="${item.name}">Item Name</span></td>
                         
                         <td><span class="quantity-badge" th:text="${item.quantity}">0</span></td>
                         
-                        <td><span class="expiration-date" th:text="${item.expirationDate}">2026-01-01</span></td>
+                        <td>
+                            <span class="expiration-date" 
+                                  th:text="${item.expirationDate != null ? item.expirationDate : 'N/A'}">2026-01-01</span>
+                        </td>
 
                         <td>
                             <span th:if="${item.quantity <= T(com.byrnald.smart_pantry.service.PantryService).DEFAULT_THRESHOLD}" 

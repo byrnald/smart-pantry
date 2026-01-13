@@ -60,11 +60,17 @@ public class PantryWebController {
     }
 
     @PostMapping("/dashboard/add")
-    public String addNewItem(@RequestParam String name, @RequestParam int quantity, @RequestParam String expirationDate) {
+    public String addNewItem(@RequestParam String name, @RequestParam int quantity, @RequestParam(required = false) String expirationDate, @RequestParam String category) {
         PantryItem newItem = new PantryItem();
         newItem.setName(name);
         newItem.setQuantity(quantity);
-        newItem.setExpirationDate(java.time.LocalDate.parse(expirationDate)); // this converts the string date to a LocalDate object
+        newItem.setCategory(category); 
+        
+        if (expirationDate != null && !expirationDate.isEmpty()) {
+            newItem.setExpirationDate(java.time.LocalDate.parse(expirationDate)); // this converts the string date to a LocalDate object
+        } else { 
+            newItem.setExpirationDate(null); // if no expiration date is provided, we can set it to null or some default value
+        }
 
         pantryService.saveItem(newItem);
         return "redirect:/dashboard";

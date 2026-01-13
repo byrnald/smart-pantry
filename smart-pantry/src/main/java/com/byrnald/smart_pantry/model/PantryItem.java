@@ -58,5 +58,14 @@ public class PantryItem {
         this.expirationDate = expirationDate;
     }
 
+    private String category; // we can add a category field to categorize items, like "food", "electronics"
+
+    //now we add the getter and settery for category
+    public String getCategory() { 
+        return category;
+    }
+    public void setCategory(String category) { 
+        this.category = category;
+    }
 
 }

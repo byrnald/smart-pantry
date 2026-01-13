@@ -39,4 +39,10 @@ public class PantryWebController {
         return "redirect:/dashboard";
     }
 
+    @PostMapping("/dashboard/restock/{id}")
+    public String restockItem(@PathVariable Long id) { 
+        pantryService.restockItem(id);
+        return "redirect:/dashboard";
+    }
+
 }

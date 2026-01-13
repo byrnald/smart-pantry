@@ -109,21 +109,30 @@
                         <td><span class="expiration-date" th:text="${item.expirationDate}">2026-01-01</span></td>
 
                         <td>
-                            <span th:if="${#lists.contains(urgentItems, item) and item.quantity <= T(com.byrnald.smart_pantry.service.PantryService).DEFAULT_THRESHOLD}" 
+                            <span th:if="${item.quantity <= T(com.byrnald.smart_pantry.service.PantryService).DEFAULT_THRESHOLD}" 
                                   class="badge-low-stock">LOW STOCK</span>
                             
-                            <span th:if="${#lists.contains(urgentItems, item) and item.quantity >= T(com.byrnald.smart_pantry.service.PantryService).DEFAULT_THRESHOLD}" 
+                            <span th:if="${#lists.contains(urgentItems, item) and item.quantity > T(com.byrnald.smart_pantry.service.PantryService).DEFAULT_THRESHOLD}" 
                                   class="badge-expiring">EXPIRING SOON</span>
                         </td>
 
                         <td>
-                            <form th:action="@{/dashboard/delete/{id}(id=${item.id})}" method="post" 
-                                  onsubmit="return confirm('Are you sure you want to delete this item?');">
-                                <button type="submit" class="btn btn-sm btn-outline-danger" 
-                                        style="font-size: 0.7rem; padding: 0.1rem 0.5rem; font-weight: 600;">
-                                    Delete
-                                </button>
-                            </form>
+                            <div class="d-flex gap-2">
+                                <form th:action="@{/dashboard/restock/{id}(id=${item.id})}" method="post">
+                                    <button type="submit" class="btn btn-sm btn-outline-success" 
+                                            style="font-size: 0.7rem; padding: 0.1rem 0.5rem; font-weight: 600;">
+                                        +1 Restock
+                                    </button>
+                                </form>
+
+                                <form th:action="@{/dashboard/delete/{id}(id=${item.id})}" method="post" 
+                                      onsubmit="return confirm('Are you sure you want to delete this item?');">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger" 
+                                            style="font-size: 0.7rem; padding: 0.1rem 0.5rem; font-weight: 600;">
+                                        Delete
+                                    </button>
+                                </form>
+                            </div>
                         </td>
                     </tr>
                 </tbody>

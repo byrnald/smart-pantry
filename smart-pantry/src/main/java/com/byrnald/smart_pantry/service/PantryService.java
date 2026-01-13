@@ -101,4 +101,18 @@ public class PantryService {
         return new java.util.ArrayList<>(urgentSet);
     }
 
+    //now we are going to add a method for restocking items so that we can easily update the quantity of an item 
+    //when we restock it, instead of having to update the entire item with the updateItem method, we can just 
+    //update the quantity with this method
+    public void restockItem(Long id) { 
+        pantryRepository.findById(id).ifPresent(item -> {
+            item.setQuantity(item.getQuantity() + 1); //we can adjust the restock amount we want, for now 1
+            pantryRepository.save(item);
+        });
+    }
+    //find by id looks for the item in the database
+    //ifpresent is just a safety check if it item exists it runs the code inside.
+    //item.setQuantity takes the current number and adds 1
+    //pantryRepository.save sends the updated itme back to the database to commit the change
+
 }

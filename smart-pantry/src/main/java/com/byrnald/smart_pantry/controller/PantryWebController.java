@@ -3,6 +3,9 @@ package com.byrnald.smart_pantry.controller;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+
 import com.byrnald.smart_pantry.service.PantryService;
 
 @Controller
@@ -29,4 +32,11 @@ public class PantryWebController {
     }
     // use http://localhost:8080/dashboard to access the dashboard and see all the items in a nice format 
     // instead of just json like in the API endpoints
+
+    @PostMapping("/dashboard/delete/{id}")
+    public String deleteItem(@PathVariable Long id) { 
+        pantryService.deleteItem(id);
+        return "redirect:/dashboard";
+    }
+
 }

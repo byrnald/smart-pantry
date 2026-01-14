@@ -1,7 +1,9 @@
 package com.byrnald.smart_pantry.service;
 
 import java.time.LocalDate;
+import java.util.Comparator; // Added for sorting
 import java.util.List;
+import java.util.stream.Collectors; // Added for sorting
 
 import org.springframework.stereotype.Service;
 
@@ -26,7 +28,9 @@ public class PantryService {
     }
 
     public List<PantryItem> getAllItems() {
-        return pantryRepository.findAll();
+        // UPDATED: Now we sort the items before returning them
+        List<PantryItem> allItems = pantryRepository.findAll();
+        return sortItems(allItems);
     }
 
     public PantryItem addItem(PantryItem item) {
@@ -129,15 +133,48 @@ public class PantryService {
 
     //we need a method that decides which repository method to call based on what the user types
     public List<PantryItem> searchItems(String keyword, String category) { 
+        List<PantryItem> results;
+        
         if (keyword != null && !keyword.isEmpty() && category != null && !category.equals("All")) {
-            return pantryRepository.findByCategoryAndNameContainingIgnoreCase(category, keyword);
+            results = pantryRepository.findByCategoryAndNameContainingIgnoreCase(category, keyword);
         } else if (category != null && !category.equals("All")) { //only category filter/search
-            return pantryRepository.findByCategory(category);
+            results = pantryRepository.findByCategory(category);
         } else if (keyword != null && !keyword.isEmpty()) { //only search
-            return pantryRepository.findByNameContainingIgnoreCase(keyword);
+            results = pantryRepository.findByNameContainingIgnoreCase(keyword);
         } else { // this just shows everything, no filters
-            return getAllItems();
+            results = pantryRepository.findAll();
         }
+        
+        // sort whatever results we found before sending them back
+        return sortItems(results);
+    }
+
+    // the smart sorting logic/algo
+    // this private helper method handles the sorting logic so we dont overdo the main methods
+    private List<PantryItem> sortItems(List<PantryItem> items) {
+        Comparator<PantryItem> smartSort = (item1, item2) -> {
+            boolean item1Low = item1.getQuantity() <= DEFAULT_THRESHOLD;
+            boolean item2Low = item2.getQuantity() <= DEFAULT_THRESHOLD;
+
+            // if low stock always floats to the top
+            if (item1Low && !item2Low) return -1; // item1 comes first
+            if (!item1Low && item2Low) return 1;  // item2 comes first
+
+            // if neither (or both) are low stock, sort by Expiration Date
+            if (item1.getExpirationDate() != null && item2.getExpirationDate() != null) {
+                return item1.getExpirationDate().compareTo(item2.getExpirationDate());
+            }
+            
+            // null dates (like cables) go to the bottom
+            if (item1.getExpirationDate() == null && item2.getExpirationDate() != null) return 1;
+            if (item1.getExpirationDate() != null && item2.getExpirationDate() == null) return -1;
+
+            // else, if no rules go over then just sort alphabetically
+            return item1.getName().compareToIgnoreCase(item2.getName());
+        };
+        return items.stream()
+                    .sorted(smartSort)
+                    .collect(Collectors.toList());
     }
 
 }

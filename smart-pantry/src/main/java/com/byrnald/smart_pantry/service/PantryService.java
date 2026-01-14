@@ -169,7 +169,7 @@ public class PantryService {
             if (item1.getExpirationDate() == null && item2.getExpirationDate() != null) return 1;
             if (item1.getExpirationDate() != null && item2.getExpirationDate() == null) return -1;
 
-            // else, if no rules go over then just sort alphabetically
+            // else if no rules go over then just sort alphabetically
             return item1.getName().compareToIgnoreCase(item2.getName());
         };
         return items.stream()

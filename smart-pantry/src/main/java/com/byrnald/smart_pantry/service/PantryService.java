@@ -127,4 +127,17 @@ public class PantryService {
         pantryRepository.save(item);
     }
 
+    //we need a method that decides which repository method to call based on what the user types
+    public List<PantryItem> searchItems(String keyword, String category) { 
+        if (keyword != null && !keyword.isEmpty() && category != null && !category.equals("All")) {
+            return pantryRepository.findByCategoryAndNameContainingIgnoreCase(category, keyword);
+        } else if (category != null && !category.equals("All")) { //only category filter/search
+            return pantryRepository.findByCategory(category);
+        } else if (keyword != null && !keyword.isEmpty()) { //only search
+            return pantryRepository.findByNameContainingIgnoreCase(keyword);
+        } else { // this just shows everything, no filters
+            return getAllItems();
+        }
+    }
+
 }

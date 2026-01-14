@@ -14,6 +14,13 @@ public interface PantryRepository extends JpaRepository<PantryItem, Long> {
     List<PantryItem> findByExpirationDateBetween(LocalDate start, LocalDate end);
     List<PantryItem> findByQuantityLessThanEqual(int threshold);
     //we need to teach our database on how to find items based on their quantity
+
+    //now we are going to search by name, CASE SENSITITIVE
+    List<PantryItem> findByNameContainingIgnoreCase(String keyword);
+    //then filter by category
+    List<PantryItem> findByCategory(String category);
+    //then both at the same time
+    List<PantryItem> findByCategoryAndNameContainingIgnoreCase(String category, String keyword);
     
 }
 // this interface extends JpaRepository so it provides basic CRUD operations for the PantryItem entity.

@@ -50,7 +50,6 @@
         
         .item-name { font-weight: 600; color: var(--accent-emphasis); }
 
-        /* Style for the Category Pill */
         .category-pill {
             font-size: 0.7rem;
             padding: 0.2rem 0.5rem;
@@ -94,12 +93,41 @@
 </head>
 <body>
     <div class="dashboard-container">
+        
         <div class="dashboard-header d-flex justify-content-between align-items-center">
             <div>
                 <h1>My Inventory & Pantry Dashboard</h1>
                 <p class="mb-0">Tracking items with a threshold of <span th:text="${T(com.byrnald.smart_pantry.service.PantryService).DEFAULT_THRESHOLD}">5</span></p>
             </div>
             <a href="/dashboard/add" class="btn btn-primary" style="font-weight: 600; background-color: #1f883d; border: none;">+ Add New Item</a>
+        </div>
+
+        <div class="card mb-4 p-3 border-0" style="background-color: #eaeef2;">
+            <form th:action="@{/dashboard}" method="get" class="row g-2 align-items-center">
+                
+                <div class="col-md-5">
+                    <input type="text" name="keyword" class="form-control" 
+                           placeholder="Search by name..." 
+                           th:value="${keyword}"> </div>
+
+                <div class="col-md-4">
+                    <select name="category" class="form-select">
+                        <option value="All">All Categories</option>
+                        <option value="Pantry" th:selected="${category == 'Pantry'}">Pantry/Food</option>
+                        <option value="Electronics" th:selected="${category == 'Electronics'}">Electronics</option>
+                        <option value="Household" th:selected="${category == 'Household'}">Household</option>
+                        <option value="Other" th:selected="${category == 'Other'}">Other</option>
+                    </select>
+                </div>
+
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-primary w-100" style="background-color: #0969da; border: none;">Search</button>
+                </div>
+                
+                <div class="col-md-1">
+                    <a href="/dashboard" class="btn btn-outline-secondary w-100" style="border-color: #8c959f; color: #424a53;">Clear</a>
+                </div>
+            </form>
         </div>
         
         <div class="table-container">
@@ -115,58 +143,37 @@
                     </tr>
                 </thead>
                 <tbody>
+                    <tr th:if="${items.empty}">
+                        <td colspan="6" class="text-center py-4 text-muted">No items found matching your search.</td>
+                    </tr>
+
                     <tr th:each="item : ${items}" 
                         th:classappend="${#lists.contains(urgentItems, item)} ? 'urgent-row' : ''">
                         
-                        <td>
-                            <span class="category-pill" th:text="${item.category != null ? item.category : 'Other'}">Category</span>
-                        </td>
-
+                        <td><span class="category-pill" th:text="${item.category != null ? item.category : 'Other'}">Category</span></td>
                         <td><span class="item-name" th:text="${item.name}">Item Name</span></td>
-                        
                         <td><span class="quantity-badge" th:text="${item.quantity}">0</span></td>
-                        
-                        <td>
-                            <span class="expiration-date" 
-                                  th:text="${item.expirationDate != null ? item.expirationDate : 'N/A'}">2026-01-01</span>
-                        </td>
+                        <td><span class="expiration-date" th:text="${item.expirationDate != null ? item.expirationDate : 'N/A'}">2026-01-01</span></td>
 
                         <td>
-                            <span th:if="${item.quantity <= T(com.byrnald.smart_pantry.service.PantryService).DEFAULT_THRESHOLD}" 
-                                  class="badge-low-stock">LOW STOCK</span>
-                            
-                            <span th:if="${#lists.contains(urgentItems, item) and item.quantity > T(com.byrnald.smart_pantry.service.PantryService).DEFAULT_THRESHOLD}" 
-                                  class="badge-expiring">EXPIRING SOON</span>
+                            <span th:if="${item.quantity <= T(com.byrnald.smart_pantry.service.PantryService).DEFAULT_THRESHOLD}" class="badge-low-stock">LOW STOCK</span>
+                            <span th:if="${#lists.contains(urgentItems, item) and item.quantity > T(com.byrnald.smart_pantry.service.PantryService).DEFAULT_THRESHOLD}" class="badge-expiring">EXPIRING SOON</span>
                         </td>
 
                         <td>
                             <div class="d-flex gap-2">
-                                <a th:href="@{/dashboard/edit/{id}(id=${item.id})}" 
-                                   class="btn btn-sm btn-outline-primary" 
-                                   style="font-size: 0.7rem; padding: 0.1rem 0.5rem; font-weight: 600;">
-                                   Edit
-                                </a>
-
+                                <a th:href="@{/dashboard/edit/{id}(id=${item.id})}" class="btn btn-sm btn-outline-primary" style="font-size: 0.7rem; padding: 0.1rem 0.5rem; font-weight: 600;">Edit</a>
+                                
                                 <form th:action="@{/dashboard/subtract/{id}(id=${item.id})}" method="post">
-                                    <button type="submit" class="btn btn-sm btn-outline-warning" 
-                                            style="font-size: 0.7rem; padding: 0.1rem 0.5rem; font-weight: 600;">
-                                        -1 Use
-                                    </button>
+                                    <button type="submit" class="btn btn-sm btn-outline-warning" style="font-size: 0.7rem; padding: 0.1rem 0.5rem; font-weight: 600;">-1 Use</button>
                                 </form>
 
                                 <form th:action="@{/dashboard/restock/{id}(id=${item.id})}" method="post">
-                                    <button type="submit" class="btn btn-sm btn-outline-success" 
-                                            style="font-size: 0.7rem; padding: 0.1rem 0.5rem; font-weight: 600;">
-                                        +1 Restock
-                                    </button>
+                                    <button type="submit" class="btn btn-sm btn-outline-success" style="font-size: 0.7rem; padding: 0.1rem 0.5rem; font-weight: 600;">+1 Restock</button>
                                 </form>
 
-                                <form th:action="@{/dashboard/delete/{id}(id=${item.id})}" method="post" 
-                                      onsubmit="return confirm('Are you sure you want to delete this item?');">
-                                    <button type="submit" class="btn btn-sm btn-outline-danger" 
-                                            style="font-size: 0.7rem; padding: 0.1rem 0.5rem; font-weight: 600;">
-                                        Delete
-                                    </button>
+                                <form th:action="@{/dashboard/delete/{id}(id=${item.id})}" method="post" onsubmit="return confirm('Are you sure you want to delete this item?');">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger" style="font-size: 0.7rem; padding: 0.1rem 0.5rem; font-weight: 600;">Delete</button>
                                 </form>
                             </div>
                         </td>

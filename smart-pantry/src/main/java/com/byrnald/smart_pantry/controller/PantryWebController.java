@@ -6,10 +6,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import java.time.LocalDate;
+
 import com.byrnald.smart_pantry.model.PantryItem;
 import com.byrnald.smart_pantry.repository.PantryRepository;
-
 import com.byrnald.smart_pantry.service.PantryService;
 
 @Controller
@@ -24,17 +23,19 @@ public class PantryWebController {
     }
 
     @GetMapping("/dashboard")
-    public String dashboard(Model model) {
-        // we put the list of all items into the model like a shopping cart, so that we can access it in our 
-        // dashboard.html file and display it there
-        model.addAttribute("items", pantryService.getAllItems());
-        //this just returns the name of the html file which is dashboard.html
+    public String dashboard(Model model, @RequestParam(required = false) String keyword, @RequestParam(required = false) String category) {
+        //now we get filtered items instead of using the getAllItems method
+        model.addAttribute("items", pantryService.searchItems(keyword, category));
 
+        // now we keep the other necessary attributes
         model.addAttribute("urgentItems", pantryService.getUrgentItems());
-
         model.addAttribute("threshold", PantryService.DEFAULT_THRESHOLD);
 
-        return "dashboard";
+        //now we send search terms back to the search bar doesnt go blank
+        model.addAttribute("keyword", keyword);
+        model.addAttribute("category", category);
+
+        return "dashboard"; // this tells spring to look for dashboard.html
     }
     // use http://localhost:8080/dashboard to access the dashboard and see all the items in a nice format 
     // instead of just json like in the API endpoints
